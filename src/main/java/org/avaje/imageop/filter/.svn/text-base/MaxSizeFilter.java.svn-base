@@ -1,0 +1,51 @@
+package app.imagestore.filter;
+
+import java.awt.image.BufferedImage;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+public class MaxSizeFilter extends AbstractBufferedImageOp {
+
+    private final int maxWidth;
+    private final int maxHeight;
+    
+    public MaxSizeFilter(int x, int y) {
+        this.maxWidth = x;
+        this.maxHeight = y;
+    }
+    
+    public BufferedImage filter(BufferedImage src, BufferedImage dest) {
+        
+        int origHeight = src.getHeight();
+        int origWidth = src.getWidth();
+
+        if (origHeight <= maxHeight && origWidth <= maxWidth){
+            return src;
+        }
+        
+        BigDecimal maxWidthBd = new BigDecimal(maxWidth);
+        BigDecimal maxHeightBd = new BigDecimal(maxHeight);
+        
+        BigDecimal origHBd = new BigDecimal(origHeight);
+        BigDecimal origWBd = new BigDecimal(origWidth);
+        
+        BigDecimal scaleWidthDb = origWBd.divide(maxWidthBd,6,RoundingMode.HALF_DOWN);
+        BigDecimal scaleHeightDb = origHBd.divide(maxHeightBd,6,RoundingMode.HALF_DOWN);
+        BigDecimal maxScaleDb = scaleWidthDb.max(scaleHeightDb);
+
+        System.out.println("scaleWidthDb:"+scaleWidthDb.doubleValue()+" scaleHeightDb:"+scaleHeightDb.doubleValue());
+
+        int width = maxWidth;
+        int height = maxHeight;
+        
+        height = origHBd.divide(maxScaleDb, RoundingMode.HALF_DOWN).intValue();
+        width = origWBd.divide(maxScaleDb, RoundingMode.HALF_DOWN).intValue();
+
+        System.out.println("width:"+width+" height:"+height);
+        
+        ScaleFilter scaleFilter = new ScaleFilter(width, height);
+        return scaleFilter.filter(src, null);
+    }
+
+    
+}
