@@ -68,6 +68,10 @@ public class ImageProcessor {
 
   private final File tempDirectory;
   
+  private ImageOp thumbImageOp;
+  
+  private ImageOp mainImageOp;
+  
   /**
    * Create the ImageProcessor with no thumbnail and using Mode.ScaleCrop and system temporary directory.
    */
@@ -99,8 +103,23 @@ public class ImageProcessor {
     this.height = height;
     this.mode = (mode == null) ? Mode.ScaleCrop : mode;
     this.tempDirectory = tempDirectory;
+
+    this.thumbImageOp = new CropScaleImageOp(thumbWidth, thumbHeight);
+    this.mainImageOp = initMainFilter();
   }
 
+  /**
+   * Return the ImageOp used to process the main image.
+   */
+  protected ImageOp initMainFilter() {
+
+    if (Mode.Max.equals(mode)) {
+      return new MaxSizeImageOp(width, height);
+    }    
+    return new CropScaleImageOp(width, height);
+  }
+
+  
   /**
    * Process the file scaling and cropping as required producing a thumbnail and scaled version of the image.
    * The ImageSet returned contains the original image file and thumbnail and scaled versions of the image.
@@ -156,25 +175,35 @@ public class ImageProcessor {
 
     return new ImageFileSet(sourceName, sourceExtension, thumbImage, maxImage);
   }
+  
+  public ImageOp getThumbImageOp() {
+    return thumbImageOp;
+  }
+
+  public void setThumbImageOp(ImageOp thumbImageOp) {
+    this.thumbImageOp = thumbImageOp;
+  }
+
+  public ImageOp getMainImageOp() {
+    return mainImageOp;
+  }
+
+  public void setMainImageOp(ImageOp mainImageOp) {
+    this.mainImageOp = mainImageOp;
+  }
 
   /**
    * Return the ImageOp used to process the main image.
    */
   protected ImageOp getMainFilter() {
-
-
-    if (Mode.Max.equals(mode)) {
-      return new MaxSizeImageOp(width, height);
-    }
-    
-    return new CropScaleImageOp(width, height);
+    return mainImageOp;
   }
 
   /**
    * Return the ImageOp used to process the thumbnail image.
    */
   protected ImageOp getThumbFilter() {
-    return new CropScaleImageOp(thumbWidth, thumbHeight);
+    return thumbImageOp;
   }
 
   /**
