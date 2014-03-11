@@ -212,6 +212,12 @@ public class ImageProcessor {
   protected ImageFileDetail processFilter(BufferedImage in, ImageOp filter,
        String sourceName, String extension, String tmpFileName) throws IOException {
 
+    if (extension.equalsIgnoreCase("tiff")) {
+      // Assuming we don't have a registered TIFF image writer 
+      // so write the modified image as a JPEG instead
+      extension = "jpg";
+    }
+    
     BufferedImage thumbBufferedImage = filter.filter(in, null);
 
     File thumbFile = File.createTempFile(sourceName+tmpFileName, "."+extension, tempDirectory);
