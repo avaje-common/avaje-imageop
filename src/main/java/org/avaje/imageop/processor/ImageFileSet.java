@@ -3,7 +3,7 @@ package org.avaje.imageop.processor;
 
 
 /**
- *
+ * Set of image details potentially containing a thumbnail image, scaled image and the original image.
  */
 public class ImageFileSet {
 
@@ -12,12 +12,14 @@ public class ImageFileSet {
   
   private final ImageFileDetail thumbImage;
   private final ImageFileDetail normalImage;
+  private final ImageFileDetail originalImage;
 
-  public ImageFileSet(String sourceName, String sourceExtension, ImageFileDetail thumbImage, ImageFileDetail normalImage) {
+  public ImageFileSet(String sourceName, String sourceExtension, ImageFileDetail thumbImage, ImageFileDetail normalImage, ImageFileDetail originalImage) {
     this.sourceName = sourceName;
     this.sourceExtension = sourceExtension;
     this.normalImage = normalImage;
     this.thumbImage = thumbImage;
+    this.originalImage = originalImage;
   }
 
   public boolean deleteFiles() {
@@ -46,4 +48,9 @@ public class ImageFileSet {
   public ImageFileDetail getNormalImage() {
     return normalImage;
   }
+
+  public ImageFileDetail getOriginalImage() {
+    return originalImage;
+  }
+  
 }
